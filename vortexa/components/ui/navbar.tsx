@@ -1,25 +1,33 @@
-"use client"
-
-import React, { useState } from 'react';
+"use client";
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { AlertCircle, LayoutDashboard, Info, LogIn, Menu, X, Settings } from 'lucide-react'; // Import icons
+import { AlertCircle, LayoutDashboard, LogIn, Menu, X, Settings } from 'lucide-react'; // Import icons
 import { auth } from '@/lib/firebase'; // Ensure this path is correct for your Firebase setup
+import { User } from 'firebase/auth';
 
 interface NavItemProps {
   name: string;
   href: string;
-  icon: React.ElementType; // Use React.ElementType for icon
+  icon: React.ElementType;
 }
+
 const navItems = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Alerts', href: '/alerts', icon: AlertCircle },
-  { name: 'About', href: '/about', icon: Info },
 ];
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const user = auth.currentUser; // Get the current user
+  const [user, setUser] = useState<User | null>(null); // State to hold user
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      return setUser(currentUser); // Update user state on auth state change
+    });
+
+    return () => unsubscribe(); // Clean up subscription on unmount
+  }, []);
 
   return (
     <nav className="bg-white shadow-md">

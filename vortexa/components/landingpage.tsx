@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import StickyNote from '@/components/ui/sticky-note'
+// import StickyNote from '@/components/ui/sticky-note'
 
 export default function LandingPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -162,22 +162,16 @@ export default function LandingPage() {
               className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4"
             >
               <a
-                href="#get-started"
+                href="/sign-in"
                 className="px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 md:py-4 md:text-lg md:px-10 transition duration-150 ease-in-out transform hover:scale-105"
               >
                 Get Started
-              </a>
-              <a
-                href="#learn-more"
-                className="px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-700 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10 transition duration-150 ease-in-out transform hover:scale-105"
-              >
-                Learn More
               </a>
             </motion.div>
           </div>
         </main>
 
-        <StickyNote />
+        {/* <StickyNote /> */}
       </div>
     </div>
   )
