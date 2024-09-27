@@ -2,26 +2,28 @@
 
 import Link from 'next/link'
 import { SearchBar } from '../components/SearchBar'
+import Dashboard from '../components/Dashboard'
 
 function Header() {
   return (
-    <header className="bg-white shadow-md">
+    <header className="bg-black-800 text-white">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <div className="text-xl font-bold text-gray-800">Project Name</div>
+        <div className="text-xl font-bold mb-2">Project Name</div>
         <nav>
           <ul className="flex space-x-4">
-            <li><Link href="/" className="text-gray-600 hover:text-gray-800">Home</Link></li>
-            <li><Link href="/login" className="text-gray-600 hover:text-gray-800">Login</Link></li>
+            <li><Link href="/" className="font mb-2 hover:text-gray-800">Home</Link></li>
+            <li><Link href="/login" className="font mb-2 hover:text-gray-800">Login</Link></li>
           </ul>
         </nav>
       </div>
+        <Dashboard />
     </header>
   )
 }
 
 function Footer() {
   return (
-    <footer className="bg-gray-800 text-white">
+    <footer className="bg-black-800 text-white">
       <div className="container mx-auto px-4 py-6 flex justify-between items-center">
         <div>
           <h3 className="font-bold mb-2">Contact Us</h3>
