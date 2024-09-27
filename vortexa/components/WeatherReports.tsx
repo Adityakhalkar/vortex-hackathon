@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image'; // Import Image from next/image
 
 interface Article {
     title: string;
@@ -52,7 +53,13 @@ const NewsComponent: React.FC = () => {
                         onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
                         >
                             {article.thumbnail && article.thumbnail !== 'No image available' ? (
-                                <img src={article.thumbnail} alt={article.title} style={{ width: '100%', height: 'auto', borderRadius: '10px' }} />
+                                <Image 
+                                    src={article.thumbnail} 
+                                    alt={article.title} 
+                                    width={300} // Set a width according to your design
+                                    height={180} // Set a height according to your design
+                                    style={{ borderRadius: '10px', objectFit: 'cover' }} // Ensures the image covers the box
+                                />
                             ) : (
                                 <div className="no-image" style={{
                                     backgroundColor: '#e0e0e0',
