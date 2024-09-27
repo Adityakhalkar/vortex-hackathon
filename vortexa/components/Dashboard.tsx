@@ -237,6 +237,8 @@ export default function DisasterDashboard() {
                                 src="/placeholder.svg"
                                 alt="Map"
                                 className="object-cover rounded-lg"
+                                width={500}
+                                height={500}
                             />
                             
                         </div>

@@ -2,10 +2,8 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import Navbar from '@/components/ui/navbar'
-import StickyNote from '@/components/ui/sticky-note'
 
-export default function LandingPage() {
+export default function BeachAnimation() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
 
@@ -18,14 +16,6 @@ export default function LandingPage() {
 
     let animationFrameId: number
     let startTime = Date.now()
-
-    const resizeCanvas = () => {
-      canvas.width = window.innerWidth
-      canvas.height = window.innerHeight
-    }
-
-    resizeCanvas()
-    window.addEventListener('resize', resizeCanvas)
 
     const drawBeach = () => {
       if (!ctx || !canvas) return
@@ -119,68 +109,31 @@ export default function LandingPage() {
 
     return () => {
       cancelAnimationFrame(animationFrameId)
-      window.removeEventListener('resize', resizeCanvas)
     }
   }, [mousePosition])
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect()
     setMousePosition({
-      x: event.clientX,
-      y: event.clientY
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top
     })
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden" onMouseMove={handleMouseMove}>
-      {/* Beach Animation Background */}
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.8, delay: 0.4 }}
+      className="w-full max-w-2xl aspect-video rounded-lg overflow-hidden shadow-lg cursor-move"
+      onMouseMove={handleMouseMove}
+    >
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 w-full h-full"
+        width={800}
+        height={450}
+        className="w-full h-full"
       />
-
-      {/* Content Overlay */}
-      <div className="relative z-10 min-h-screen flex flex-col">
-        <Navbar />
-
-        <main className="flex-grow flex items-center justify-center px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl w-full space-y-8 text-center">
-            <motion.div
-              initial={{ opacity: 0, y: -50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold text-white drop-shadow-lg">
-                Crisis Connect
-              </h1>
-              <p className="mt-3 text-xl sm:text-2xl md:text-3xl text-white drop-shadow-md">
-                Saving your life can't be easier
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4"
-            >
-              <a
-                href="#get-started"
-                className="px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 md:py-4 md:text-lg md:px-10 transition duration-150 ease-in-out transform hover:scale-105"
-              >
-                Get Started
-              </a>
-              <a
-                href="#learn-more"
-                className="px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-700 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10 transition duration-150 ease-in-out transform hover:scale-105"
-              >
-                Learn More
-              </a>
-            </motion.div>
-          </div>
-        </main>
-
-        <StickyNote />
-      </div>
-    </div>
+    </motion.div>
   )
 }
