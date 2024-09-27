@@ -1,19 +1,25 @@
 "use client"
 
-import React, { useState } from 'react'
-import Link from 'next/link'
-import { motion } from 'framer-motion'
-import { AlertCircle, LayoutDashboard, Info, LogIn, Menu, X } from 'lucide-react'
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { AlertCircle, LayoutDashboard, Info, LogIn, Menu, X, Settings } from 'lucide-react'; // Import icons
+import { auth } from '@/lib/firebase'; // Ensure this path is correct for your Firebase setup
 
+interface NavItemProps {
+  name: string;
+  href: string;
+  icon: React.ElementType; // Use React.ElementType for icon
+}
 const navItems = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Alerts', href: '/alerts', icon: AlertCircle },
   { name: 'About', href: '/about', icon: Info },
-  { name: 'Sign In', href: '/sign-in', icon: LogIn },  // Added Sign In here
-]
+];
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
+  const user = auth.currentUser; // Get the current user
 
   return (
     <nav className="bg-white shadow-md">
@@ -25,17 +31,32 @@ export default function Navbar() {
             </Link>
           </div>
           <div className="hidden md:flex items-center">
-            {navItems.filter(item => item.name !== 'Sign In').map((item) => (  // Exclude 'Sign In' for desktop menu
+            {navItems.map((item) => (
               <NavItem key={item.name} {...item} />
             ))}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="ml-8 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300"
-            >
-              <LogIn className="h-5 w-5 mr-2" />
-              Sign In
-            </motion.button>
+            {user ? (
+              <Link href="/user-settings">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="ml-8 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300"
+                >
+                  <Settings className="h-5 w-5 mr-2" />
+                  User Settings
+                </motion.button>
+              </Link>
+            ) : (
+              <Link href="/sign-in">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="ml-8 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-300"
+                >
+                  <LogIn className="h-5 w-5 mr-2" />
+                  Sign In
+                </motion.button>
+              </Link>
+            )}
           </div>
           <div className="md:hidden flex items-center">
             <button
@@ -61,13 +82,22 @@ export default function Navbar() {
           {navItems.map((item) => (
             <MobileNavItem key={item.name} {...item} />
           ))}
+          {user ? (
+            <Link href="/user-settings" className="block px-3 py-2 rounded-md text-base font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-300">
+              User Settings
+            </Link>
+          ) : (
+            <Link href="/sign-in" className="block px-3 py-2 rounded-md text-base font-medium text-green-600 hover:text-green-700 transition-colors duration-300">
+              Sign In
+            </Link>
+          )}
         </div>
       </motion.div>
     </nav>
-  )
+  );
 }
 
-function NavItem({ name, href, icon: Icon }) {
+function NavItem({ name, href, icon: Icon }: NavItemProps) {
   return (
     <Link href={href} className="ml-8 inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-blue-600 transition-colors duration-300">
       <motion.div
@@ -85,10 +115,10 @@ function NavItem({ name, href, icon: Icon }) {
         />
       </motion.div>
     </Link>
-  )
+  );
 }
 
-function MobileNavItem({ name, href, icon: Icon }) {
+function MobileNavItem({ name, href, icon: Icon }: NavItemProps) {
   return (
     <Link href={href} className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors duration-300">
       <div className="flex items-center">
@@ -96,5 +126,5 @@ function MobileNavItem({ name, href, icon: Icon }) {
         {name}
       </div>
     </Link>
-  )
+  );
 }

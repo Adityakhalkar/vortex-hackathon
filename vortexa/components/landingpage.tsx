@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import Navbar from '@/components/ui/navbar'
 import StickyNote from '@/components/ui/sticky-note'
 
 export default function LandingPage() {
@@ -17,7 +16,7 @@ export default function LandingPage() {
     if (!ctx) return
 
     let animationFrameId: number
-    let startTime = Date.now()
+    const startTime = Date.now()
 
     const resizeCanvas = () => {
       canvas.width = window.innerWidth
@@ -152,7 +151,7 @@ export default function LandingPage() {
                 Crisis Connect
               </h1>
               <p className="mt-3 text-xl sm:text-2xl md:text-3xl text-white drop-shadow-md">
-                Saving your life can't be easier
+                Saving your life can&apos;t be easier
               </p>
             </motion.div>
 

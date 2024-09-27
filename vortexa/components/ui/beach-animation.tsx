@@ -15,7 +15,7 @@ export default function BeachAnimation() {
     if (!ctx) return
 
     let animationFrameId: number
-    let startTime = Date.now()
+    const startTime = Date.now()
 
     const drawBeach = () => {
       if (!ctx || !canvas) return
