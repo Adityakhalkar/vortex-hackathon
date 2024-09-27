@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Natural Calamity News</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .news-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .news-card {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 300px;
+            padding: 15px;
+            text-align: left;
+            transition: transform 0.3s ease-in-out;
+        }
+        .news-card:hover {
+            transform: translateY(-5px);
+        }
+        .news-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+        .news-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-top: 10px;
+        }
+        .news-description {
+            font-size: 14px;
+            color: #666;
+            margin: 10px 0;
+        }
+        .news-link {
+            font-size: 14px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .news-link:hover {
+            text-decoration: underline;
+        }
+        .no-image {
+            background-color: #e0e0e0;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #888;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Natural Calamity News</h1>
+    <div class="news-container">
+        {% for article in news_articles %}
+            <div class="news-card">
+                {% if article.thumbnail and article.thumbnail != 'No image available' %}
+                    <img src="{{ article.thumbnail }}" alt="{{ article.title }}">
+                {% else %}
+                    <div class="no-image">No image available</div>
+                {% endif %}
+                <div class="news-title">{{ article.title }}</div>
+                <div class="news-description">{{ article.snippet }}</div>
+                <a href="{{ article.link }}" class="news-link" target="_blank">Read more</a>
+            </div>
+        {% else %}
+            <div>No articles found.</div>
+        {% endfor %}
+    </div>
+
+</body>
+</html>
