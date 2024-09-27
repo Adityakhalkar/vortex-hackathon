@@ -22,8 +22,12 @@ const NewsComponent: React.FC = () => {
                 }
                 const data = await response.json();
                 setNewsArticles(data.articles); // Assuming the response has an "articles" field
-            } catch (err: any) {
-                setError(err.message);
+            } catch (err: unknown) {
+                if (err instanceof Error) {
+                    setError(err.message);
+                } else {
+                    setError('An unknown error occurred');
+                }
             } finally {
                 setLoading(false);
             }
