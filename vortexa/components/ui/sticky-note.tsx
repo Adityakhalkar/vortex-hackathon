@@ -26,16 +26,37 @@ export default function SafetyAlert() {
   const [currentNews, setCurrentNews] = useState<string>('')
   const [isVisible, setIsVisible] = useState(true)
   const [safeZones, setSafeZones] = useState<SafeZone[]>([])
+  const [location, setLocation] = useState<Location | null>(null)
+  const [, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    // Get the user's current location
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords
+          setLocation({ latitude: latitude.toString(), longitude: longitude.toString() })
+        },
+        (error) => {
+          setError(error.message)
+          setCurrentNews('Unable to retrieve location. Please enable location services.')
+        }
+      )
+    } else {
+      setError('Geolocation is not supported by this browser.')
+      setCurrentNews('Geolocation is not supported by this browser.')
+    }
+  }, [])
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        // Fetch current location
-        const locationResponse = await fetch('https://vortex-backend-de3g.onrender.com/current-location/')
-        const location: Location = await locationResponse.json()
+      if (!location) return // Wait until location is available
 
-        // Fetch safe zones
-        const safeZonesResponse = await fetch(`https://vortex-backend-de3g.onrender.com/safe-zones?lat=${location.latitude}&lon=${location.longitude}`)
+      try {
+        // Fetch safe zones based on the user's current location
+        const safeZonesResponse = await fetch(
+          `https://vortex-backend-de3g.onrender.com/safe-zones?lat=${location.latitude}&lon=${location.longitude}`
+        )
         const safeZonesData: SafeZoneResponse[] = await safeZonesResponse.json()
 
         // Calculate distances and sort safe zones
@@ -65,18 +86,22 @@ export default function SafetyAlert() {
     const timer = setInterval(fetchData, 60000) // Refresh every minute
 
     return () => clearInterval(timer)
-  }, [])
+  }, [location]) // Dependency on `location`
 
   const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
     const R = 6371 // Radius of the Earth in km
     const dLat = (lat2 - lat1) * (Math.PI / 180)
     const dLon = (lon2 - lon1) * (Math.PI / 180)
-    const a = 
+    const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * 
+      Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
       Math.sin(dLon / 2) * Math.sin(dLon / 2)
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
     return R * c
+  }
+
+  if (!currentNews) {
+    return <div>Loading...</div>
   }
 
   return (

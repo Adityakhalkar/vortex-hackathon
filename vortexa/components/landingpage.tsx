@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-// import StickyNote from '@/components/ui/sticky-note'
+import StickyNote from '@/components/ui/sticky-note'
 
 export default function LandingPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -171,7 +171,7 @@ export default function LandingPage() {
           </div>
         </main>
 
-        {/* <StickyNote /> */}
+        <StickyNote />
       </div>
     </div>
   )
