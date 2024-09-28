@@ -35,17 +35,17 @@ const fields = [
 ]
 
 const riskItems = [
-    { name: 'Ambulance', icon: <Heart className="w-6 h-6" />, value: 102 , color: 'bg-blue-200' },
+    { name: 'Ambulance', icon: <Heart className="w-6 h-6" />, value: 102, color: 'bg-blue-200' },
     { name: 'Fire', icon: <Flame className="w-6 h-6" />, value: 101, color: 'bg-red-200' },
     { name: 'Police', icon: <Shield className="w-6 h-6" />, value: 100, color: 'bg-yellow-200' },
 ]
 
 const alertItems = [
-    { name: 'TEMPRATURE', unit: '°F', icon: <Thermometer className="w-5 h-5" />, color: 'bg-red-200', jsonSearchQuery: 'temp', changeGraphTo: 'temp' },
-    { name: 'HUMIDITY', unit: '%', icon: <DropletIcon className="w-5 h-5" />, color: 'bg-gray-200', jsonSearchQuery: 'humidity', changeGraphTo: 'humidity' },
-    { name: 'WINDSPEED', unit: 'kmh', icon: <LeafIcon className="w-5 h-5" />, color: 'bg-green-200', jsonSearchQuery: 'windspeed', changeGraphTo: 'wgust'},
-    { name: 'PRECIPITATION', unit: 'mm', icon: <CloudRainIcon className="w-5 h-5" />, color: 'bg-blue-200', jsonSearchQuery: 'precip', changeGraphTo: 'precip' },
-    { name: 'WEATHER', unit: '', icon: <Cloud className="w-5 h-5" />, color: 'bg-yellow-200', jsonSearchQuery: 'conditions', changeGraphTo: '' },
+    { name: 'TEMPRATURE', unit: '°F', icon: <Thermometer className="w-5 h-5" />, color: 'bg-red-200', jsonSearchQuery: 'temp', changeGraphTo: 'temp', interactive: true },
+    { name: 'HUMIDITY', unit: '%', icon: <DropletIcon className="w-5 h-5" />, color: 'bg-gray-200', jsonSearchQuery: 'humidity', changeGraphTo: 'humidity', interactive: true },
+    { name: 'WINDSPEED', unit: 'kmh', icon: <LeafIcon className="w-5 h-5" />, color: 'bg-green-200', jsonSearchQuery: 'windspeed', changeGraphTo: 'wgust', interactive: true },
+    { name: 'PRECIPITATION', unit: 'mm', icon: <CloudRainIcon className="w-5 h-5" />, color: 'bg-blue-200', jsonSearchQuery: 'precip', changeGraphTo: 'precip', interactive: true },
+    { name: 'WEATHER', unit: '', icon: <Cloud className="w-5 h-5" />, color: 'bg-yellow-200', jsonSearchQuery: 'conditions', changeGraphTo: '', interactive: false },
 ]
 
 export default function DisasterDashboard() {
@@ -60,6 +60,8 @@ export default function DisasterDashboard() {
         conditions: "Rain, Overcast"
     })
     const [weatherData, setWeatherData] = useState([])
+
+    const [safePlaces, setSafePlaces] = useState<{ name: string, display_name: string, osm_id: string }[]>([])
 
     const chartData = {
         labels: weatherData.map((_, index) => `Day ${index + 1}`),
@@ -101,6 +103,22 @@ export default function DisasterDashboard() {
                 if (!weatherForecastResponse.ok) throw new Error('Network response was not ok');
                 const weatherForecastData = await weatherForecastResponse.json();
                 setWeatherData(weatherForecastData);
+
+
+
+                // fetch safe places in city
+                // const coordinatesPlacesResponse = await fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${cityData.city}&limit=50&appid=1779406e9f90ca7ca89c61efaf59681d`)
+                // const coordinatesData = await coordinatesPlacesResponse.json()
+                // const lat = coordinatesData[0].lat
+                // const lon = coordinatesData[0].lon
+
+                const safePlacesResponse = await fetch(`https://vortex-backend-de3g.onrender.com/safe-zones/?lat=18.6214797&lon=73.8208455`)
+                const safePlacesData = await safePlacesResponse.json()
+
+                // console.log(safePlacesData)
+                setSafePlaces(safePlacesData)
+
+
             } catch (error) {
                 console.error('There was a problem with the fetch operation:', error);
             }
@@ -150,14 +168,17 @@ export default function DisasterDashboard() {
                         transition={{ duration: 0.5, delay: 0.6 }}
                         className="mt-8 bg-white rounded-lg shadow-lg p-6 "
                     >
-                        <h2 className="text-2xl font-bold mb">Weather Alerts</h2>
+                        <h2 className="text-2xl font-bold mb-4">Weather Alerts</h2>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 cursor-pointer" >
                             {alertItems.map((item) => (
-                                <motion.div 
-                                    key={item.name} 
-                                    className={`${item.color} rounded-lg p-4`} 
-                                    onClick={() => setSelectedField(item.changeGraphTo)}
-                                    whileHover={{scale: 1.05}}
+                                <motion.div
+                                    key={item.name}
+                                    className={`${item.color} rounded-lg p-4`}
+                                    onClick={() => {
+                                        if (item.interactive)
+                                            setSelectedField(item.changeGraphTo)
+                                    }}
+                                    whileHover={{ scale: item.interactive ? 1.05 : 1 }}
                                 >
                                     <div className="flex items-center justify-start gap-2">
                                         {item.icon}
@@ -170,7 +191,7 @@ export default function DisasterDashboard() {
                     </motion.div>
                 </div>
 
-                <div className='w-full h-full flex flex-col mx-auto '>
+                <div className='w-full h-full flex flex-col '>
                     <motion.div
                         id='map'
                         initial={{ opacity: 0, y: 20 }}
@@ -179,13 +200,13 @@ export default function DisasterDashboard() {
                         className="bg-white rounded-lg shadow-lg p-6 "
                     >
                         <h2 className="text-2xl font-bold mb-4 text-center">Map of India with Clouds</h2>
-                        <div className="overflow-scroll flex-1">
+                        <div className="w-full  flex-1">
                             <Image
-                                src="https://upload.wikimedia.org/wikipedia/commons/7/7c/2021_CIMSS_03B_Gulab_visible_infrared_satellite_loop.gif?20210926220544" 
+                                src="https://upload.wikimedia.org/wikipedia/commons/7/7c/2021_CIMSS_03B_Gulab_visible_infrared_satellite_loop.gif?20210926220544"
                                 alt="Cloud Coverage Map of India"
-                                className="object-cover rounded-lg mx-auto"
-                                width={500}
-                                height={100}
+                                className="object-fill rounded-lg m-auto"
+                                width={600}
+                                height={450}
                             />
                         </div>
                     </motion.div>
@@ -209,9 +230,45 @@ export default function DisasterDashboard() {
                                 </div>
                             ))}
                         </div>
+
+
+
                     </motion.div>
                 </div>
+
+
+
+
             </main>
+
+            <motion.div
+                id='safe-zones'
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+                className="mt-8  rounded-lg shadow-lg p-6 w-full "
+            >
+                <h2 className="text-2xl font-bold mb-4">Safe places</h2>
+
+                <div className=' flex flex-wrap w-full justify-center gap-8'>
+                   {
+  safePlaces.map((item, index) => {
+    return (
+      <div key={item.osm_id || index} className='flex flex-col bg-white rounded-md w-[400px] p-[10px]'>
+        <h2 className='mb-2 text-[20px] font-bold'>{item.name}</h2>
+        <p className='max-h-[200px]'>{item.display_name}</p>
+        <p className='mt-4 overflow-scroll'>{item.osm_id}</p>
+      </div>
+    );
+  })
+}
+
+                </div>
+
+
+            </motion.div>
+
+
         </div>
     )
 }
