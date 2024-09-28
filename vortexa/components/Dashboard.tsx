@@ -170,22 +170,22 @@ export default function DisasterDashboard() {
                     </motion.div>
                 </div>
 
-                <div className='w-full h-full flex flex-col '>
+                <div className='w-full h-full flex flex-col mx-auto '>
                     <motion.div
                         id='map'
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}
-                        className="bg-white rounded-lg shadow-lg p-6 h-[60%]"
+                        className="bg-white rounded-lg shadow-lg p-6 "
                     >
-                        <h2 className="text-2xl font-bold mb-4">Map of India with Clouds</h2>
-                        <div className="aspect-w-16 aspect-h-9 mb-4">
+                        <h2 className="text-2xl font-bold mb-4 text-center">Map of India with Clouds</h2>
+                        <div className="overflow-scroll flex-1">
                             <Image
                                 src="https://upload.wikimedia.org/wikipedia/commons/7/7c/2021_CIMSS_03B_Gulab_visible_infrared_satellite_loop.gif?20210926220544" 
                                 alt="Cloud Coverage Map of India"
-                                className="object-cover rounded-lg"
-                                width={600} // Adjust width as needed
-                                height={450} // Adjust height as needed
+                                className="object-cover rounded-lg mx-auto"
+                                width={500}
+                                height={100}
                             />
                         </div>
                     </motion.div>
